@@ -1,0 +1,22 @@
+.formAddContact {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #111;
+  border-radius: 5px;
+  padding: 5px;
+  gap: 10px;
+}
+.labelAddContact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.inputAdd {
+  width: 50%;
+  border: 1px solid #111;
+}
+.btnAddContact {
+  width: 40%;
+  border: 1px solid #111;
+  border-radius: 5px;
+}
