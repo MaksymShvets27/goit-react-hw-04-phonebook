@@ -1,76 +1,58 @@
 import ContactForm from './InputName/InputName';
 import ContactList from './ContacstList/ContactsList';
 import { nanoid } from 'nanoid';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import Filter from './FilterContacts/FilterContacts';
 import './App.module.css';
 
-export class App extends React.Component {
-  state = {
-    contacts: [],
-    filterC: '',
-  };
+export const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [filter, setFilter] = useState('');
 
-  componentDidMount() {
+  useEffect(() => {
     if (localStorage.getItem('Contacts')) {
       let localStorageState = JSON.parse(localStorage.getItem('Contacts'));
-      this.setState({ contacts: localStorageState });
+      setContacts(localStorageState ?? []);
     }
-  }
+  }, []);
 
-  addContact = (name, number) => {
-    return this.setState({
-      contacts: [
-        ...this.state.contacts,
-        { id: nanoid(), name: name, number: number },
-      ],
-    });
-  };
-  addFilter = filter => {
-    return this.setState({ filterC: filter });
+  const addContact = (name, number) => {
+    return setContacts([
+      ...contacts,
+      { id: nanoid(), name: name, number: number },
+    ]);
   };
 
-  filtredContacts = () => {
-    const normalizeFilter = this.state.filterC.toLocaleLowerCase();
+  const addFilter = filter => {
+    return setFilter(filter);
+  };
 
-    const filtredContacts = this.state.contacts.filter(contact =>
+  const filtredContacts = () => {
+    const normalizeFilter = filter.toLocaleLowerCase();
+    const filtredContacts = contacts.filter(contact =>
       contact.name.toLocaleLowerCase().includes(normalizeFilter)
     );
-
     return filtredContacts;
   };
 
-  deleteContact = id => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id),
-    }));
+  const deleteContact = id => {
+    setContacts(contacts.filter(contact => contact.id !== id));
   };
 
-  saveLocalStorege = () => {
-    localStorage.setItem('Contacts', JSON.stringify(this.state.contacts));
-  };
+  useEffect(() => {
+    localStorage.setItem('Contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      this.saveLocalStorege();
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Phonebook</h1>
-        <ContactForm
-          contacts={this.state.contacts}
-          addContact={this.addContact}
-        />
-        <h2>Contacts</h2>
-        <Filter filter={this.addFilter} />
-        <ContactList
-          contacts={this.filtredContacts()}
-          deleteContact={this.deleteContact}
-        ></ContactList>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <h1>Phonebook</h1>
+      <ContactForm contacts={contacts} addContact={addContact} />
+      <h2>Contacts</h2>
+      <Filter filter={addFilter} />
+      <ContactList
+        contacts={filtredContacts()}
+        deleteContact={deleteContact}
+      ></ContactList>
+    </div>
+  );
+};
